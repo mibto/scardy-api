@@ -1,15 +1,53 @@
 package me.scardy.business_logic;
 
-import me.scardy.model.KeystoreModel;
+import me.scardy.model.KeyStore;
+import me.scardy.model.VersionedData;
 import me.scardy.setup.MongoDb;
+import org.mongodb.morphia.Key;
 
-/**
- * Created by MB on 20.06.2016.
- */
+import java.util.Date;
+import java.util.List;
+
+
 public class KeyStoreHandler {
 
-    public static String getKeyStore(String id){
-        KeystoreModel keystore = MongoDb.getDatastore().createQuery( KeystoreModel.class ).field( "keystoreId" ).equal( id ).get();
-        return keystore.getName();
+    String id;
+    KeyStore keyStore;
+
+    public KeyStoreHandler( String id ) {
+        this.id = id;
+        keyStore = MongoDb.getDatastore().get( KeyStore.class, id );
+    }
+
+    public VersionedData getKeyStore( Date version ) {
+        if ( keyStore != null ) {
+            return keyStore.getVersion( version );
+        } else {
+            return null;
+        }
+    }
+
+
+    public List<Date> getVersions() {
+        return keyStore.getVersions();
+    }
+
+
+    public boolean createKeyStore() {
+        if ( keyStore != null ) {
+            return false;
+        }
+        Key<KeyStore> keyStoreKey = MongoDb.getDatastore().insert( new KeyStore( id ) );
+        return keyStoreKey != null;
+    }
+
+    public boolean updateKeyStore( String encryptedData ) {
+        if ( keyStore != null ) {
+            keyStore.addVersion( new VersionedData().setEncryptedData( encryptedData ) );
+            MongoDb.getDatastore().save( keyStore );
+            return true;
+        } else {
+            return false;
+        }
     }
 }

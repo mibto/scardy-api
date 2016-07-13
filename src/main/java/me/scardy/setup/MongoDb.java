@@ -29,12 +29,11 @@ public final class MongoDb {
 
     public static void initConnection() {
         databaseName = "scardy";
-        credentials = MongoCredential.createCredential( "scardy", "scardy", "changeForProduction".toCharArray());
+        credentials = MongoCredential.createCredential( "scardy", "scardy", "changeForProduction".toCharArray() );
         mongoClient = new MongoClient( new ServerAddress( "localhost" ), Collections.singletonList( credentials ) );
     }
 
-    public static void initMorphia()
-    {
+    public static void initMorphia() {
         if ( MongoDb.getMongoClient() == null ) {
             throw new IllegalStateException( "You must first initialize MongoDb" );
         }
@@ -52,7 +51,7 @@ public final class MongoDb {
         ds.ensureCaps();
 
         // Turn Datastore in AdvancedDatastore (more methods available)
-        aDs = (AdvancedDatastore)ds;
+        aDs = (AdvancedDatastore) ds;
     }
 
     public static void destroyConnection() {
@@ -60,8 +59,7 @@ public final class MongoDb {
         mongoClient = null;
     }
 
-    public static void destroyMorphia()
-    {
+    public static void destroyMorphia() {
         aDs = null;
         morphia = null;
     }
@@ -72,27 +70,24 @@ public final class MongoDb {
     }
 
     /* Allow for loading of DBs other than scardy, e.g. for testing */
-    public static MongoDatabase getDb(String dbName) {
-        return mongoClient.getDatabase(dbName);
+    public static MongoDatabase getDb( String dbName ) {
+        return mongoClient.getDatabase( dbName );
 
     }
 
     public static MongoDatabase getDb() {
-        return getDb(databaseName);
+        return getDb( databaseName );
     }
 
     /**
      * Method for fetching ONE object
      *
      * @param <T>
-     * @param classType
-     *            Which class-type of object is supposed to be fetched
-     * @param id
-     *            Unique object identifier (e.g. userId)
+     * @param classType Which class-type of object is supposed to be fetched
+     * @param id        Unique object identifier (e.g. userId)
      * @return Object of given class-type
      */
-    public static <T> T get( Class<T> classType, Object id )
-    {
+    public static <T> T get( Class<T> classType, Object id ) {
         return aDs.get( classType, id );
     }
 
@@ -101,8 +96,7 @@ public final class MongoDb {
      *
      * @return Datastore object
      */
-    public static AdvancedDatastore getDatastore()
-    {
+    public static AdvancedDatastore getDatastore() {
         return aDs;
     }
 }

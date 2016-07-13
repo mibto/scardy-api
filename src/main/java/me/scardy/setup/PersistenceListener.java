@@ -9,15 +9,13 @@ import javax.servlet.ServletContextListener;
 public class PersistenceListener implements ServletContextListener {
 
     @Override
-    public void contextInitialized( ServletContextEvent ignored )
-    {
+    public void contextInitialized( ServletContextEvent ignored ) {
         MongoDb.initConnection();
         MongoDb.initMorphia();
     }
 
     @Override
-    public void contextDestroyed( ServletContextEvent ignored )
-    {
+    public void contextDestroyed( ServletContextEvent ignored ) {
         MongoDb.destroyMorphia();
         MongoDb.destroyConnection();
     }
