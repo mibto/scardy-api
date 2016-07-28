@@ -12,7 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -26,11 +25,11 @@ public class KeyStoreResource {
 
     @GET
     @Produces( MediaType.APPLICATION_JSON )
-    public Response getKeyStore( @QueryParam( "version" ) String version ) {
+    public Response getKeyStore( @QueryParam( "version" ) Long version ) {
         try {
-            DateFormat dateFormat = DateFormat.getDateInstance();
-            return Response.ok().entity( new KeyStoreHandler( id ).getKeyStore( dateFormat.parse( version ) ).toJson().toString() ).build();
+            return Response.ok().entity( new KeyStoreHandler( id ).getKeyStore( new Date( version ) ).toJSON().toString() ).build();
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }
@@ -48,6 +47,7 @@ public class KeyStoreResource {
             }
             return Response.ok().entity( versions.toString() ).build();
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }
@@ -71,6 +71,7 @@ public class KeyStoreResource {
                 }
             }
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }

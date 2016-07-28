@@ -18,7 +18,7 @@ public class DataStore implements Store {
     private String admin;
 
     @Embedded
-    private ArrayList<VersionedData> versions;
+    private ArrayList<VersionedData> versions = new ArrayList<>();
 
     public DataStore() {
         //constructor for morphia

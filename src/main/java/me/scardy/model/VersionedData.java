@@ -3,7 +3,6 @@ package me.scardy.model;
 import org.json.JSONObject;
 import org.mongodb.morphia.annotations.Embedded;
 
-import java.util.Base64;
 import java.util.Date;
 
 @Embedded
@@ -16,7 +15,7 @@ public class VersionedData implements Data {
     private boolean hasDecryptionProblem;
 
 
-    private byte[] encryptedData;
+    private String encryptedData;
 
 
     public VersionedData() {
@@ -39,16 +38,16 @@ public class VersionedData implements Data {
 
     @Override
     public VersionedData setEncryptedData( String encryptedData ) {
-        this.encryptedData = Base64.getDecoder().decode( encryptedData );
+        this.encryptedData = encryptedData;
         return this;
     }
 
     @Override
-    public JSONObject toJson() {
+    public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.append( "version", getVersion().getTime() );
-        json.append( "hasDecryptionProblem", getHasDecryptionProblem() );
-        json.append( "encryptedData", Base64.getEncoder().encode( encryptedData ) );
+        json.put( "version", version.getTime() );
+        json.put( "hasDecryptionProblem", hasDecryptionProblem );
+        json.put( "encryptedData", encryptedData );
         return json;
     }
 }

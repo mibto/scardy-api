@@ -14,6 +14,6 @@ public interface Data {
 
     void setHasDecryptionProblem( boolean hasDecryptionProblem );
 
-    JSONObject toJson();
+    JSONObject toJSON();
 
 }

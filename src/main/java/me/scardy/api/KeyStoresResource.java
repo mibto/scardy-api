@@ -10,7 +10,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 
 public class KeyStoresResource {
 
@@ -19,18 +18,24 @@ public class KeyStoresResource {
     @Consumes( MediaType.APPLICATION_JSON )
     public Response createKeyStore( String jsonString ) {
         try {
-            JSONObject keyStore = new JSONObject( jsonString );
-            String id = keyStore.optString( "id" );
+            JSONObject keyStoreAsJSON = new JSONObject( jsonString );
+            String id = keyStoreAsJSON.getString( "id" );
+            String encryptedData = keyStoreAsJSON.getString( "encryptedData" );
             if ( "".equals( id ) ) {
                 return Response.status( Response.Status.BAD_REQUEST ).build();
             }
-            boolean success = new KeyStoreHandler( id ).createKeyStore();
-            if ( success ) {
-                return Response.created( URI.create( id ) ).build();
+            KeyStoreHandler keyStoreHandler = new KeyStoreHandler( id );
+            if ( keyStoreHandler.createKeyStore() ) {
+                if ( keyStoreHandler.updateKeyStore( encryptedData ) ) {
+                    return Response.ok().build();
+                } else {
+                    return Response.serverError().build();
+                }
             } else {
                 return Response.serverError().build();
             }
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }

@@ -38,6 +38,7 @@ public class KeyStoreHandler {
             return false;
         }
         Key<KeyStore> keyStoreKey = MongoDb.getDatastore().insert( new KeyStore( id ) );
+        keyStore = MongoDb.getDatastore().get( KeyStore.class, id );
         return keyStoreKey != null;
     }
 

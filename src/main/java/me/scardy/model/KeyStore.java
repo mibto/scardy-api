@@ -18,7 +18,7 @@ public class KeyStore implements Store {
 
 
     @Embedded
-    private List<VersionedData> versions;
+    private List<VersionedData> versions = new ArrayList<>();
 
 
     public KeyStore( String id ) {

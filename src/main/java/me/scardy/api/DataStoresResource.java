@@ -10,28 +10,33 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 
-class DataStoresResource {
+public class DataStoresResource {
 
     @POST
     @Consumes( MediaType.APPLICATION_JSON )
     @Produces( MediaType.APPLICATION_JSON )
     public Response createDataStore( String jsonString ) {
         try {
-            JSONObject dataStore = new JSONObject( jsonString );
-            String id = dataStore.optString( "id" );
-            String admin = dataStore.optString( "admin" );
+            JSONObject dataStoreAsJSON = new JSONObject( jsonString );
+            String id = dataStoreAsJSON.optString( "id" );
+            String admin = dataStoreAsJSON.optString( "admin" );
+            String encryptedData = dataStoreAsJSON.optString( "encryptedData" );
             if ( "".equals( id ) || "".equals( admin ) ) {
                 return Response.status( Response.Status.BAD_REQUEST ).build();
             }
-            boolean success = new DataStoreHandler( id ).createDataStore( admin );
-            if ( success ) {
-                return Response.created( URI.create( id ) ).build();
+            DataStoreHandler dataStoreHandler = new DataStoreHandler( id );
+            if ( dataStoreHandler.createDataStore( admin ) ) {
+                if ( dataStoreHandler.updateDataStore( encryptedData, admin ) ) {
+                    return Response.ok().build();
+                } else {
+                    return Response.serverError().build();
+                }
             } else {
                 return Response.serverError().build();
             }
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }

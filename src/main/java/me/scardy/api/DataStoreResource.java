@@ -16,7 +16,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-class DataStoreResource {
+public class DataStoreResource {
 
     private String id;
 
@@ -29,8 +29,9 @@ class DataStoreResource {
     public Response getDataStore( @QueryParam( "version" ) String version ) {
         try {
             DateFormat dateFormat = DateFormat.getDateInstance();
-            return Response.ok().entity( new DataStoreHandler( id ).getDataStore( dateFormat.parse( version ) ).toJson().toString() ).build();
+            return Response.ok().entity( new DataStoreHandler( id ).getDataStore( dateFormat.parse( version ) ).toJSON().toString() ).build();
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }
@@ -47,6 +48,7 @@ class DataStoreResource {
             }
             return Response.ok().entity( versions.toString() ).build();
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }
@@ -56,13 +58,13 @@ class DataStoreResource {
     @Produces( MediaType.APPLICATION_JSON )
     public Response updateDataStore( String jsonString ) {
         try {
-            JSONObject dataStore = new JSONObject( jsonString );
-            String encryptedData = dataStore.optString( "encryptedData" );
-            String admin = dataStore.optString( "admin" );
+            JSONObject dataStoreAsJSON = new JSONObject( jsonString );
+            String encryptedData = dataStoreAsJSON.optString( "encryptedData" );
+            String admin = dataStoreAsJSON.optString( "admin" );
             if ( "".equals( encryptedData ) || "".equals( admin ) ) {
                 return Response.status( Response.Status.BAD_REQUEST ).build();
             } else {
-                boolean success = new DataStoreHandler( id ).updateDataStore( admin, encryptedData );
+                boolean success = new DataStoreHandler( id ).updateDataStore( encryptedData, admin );
                 if ( success ) {
                     return Response.ok().build();
                 } else {
@@ -70,6 +72,7 @@ class DataStoreResource {
                 }
             }
         } catch ( Exception e ) {
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }

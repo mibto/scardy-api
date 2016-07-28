@@ -37,6 +37,7 @@ public class DataStoreHandler {
             return false;
         }
         Key<DataStore> dataStoreKey = MongoDb.getDatastore().insert( new DataStore( id, admin ) );
+        dataStore = MongoDb.getDatastore().get( DataStore.class, id );
         return dataStoreKey != null;
     }
 
